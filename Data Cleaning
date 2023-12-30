@@ -1,0 +1,34 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('/content/Final Project Data - Transactions.csv')
+
+#dropping rows with any null values
+df = df.dropna()
+
+#dropping duplicate rows and columns
+df = df.drop_duplicates()
+df = df.drop(columns = ['transaction_id'])
+
+#removing dollar sign and changing standard cost to a float
+to_remove = [',', ' ', '$']
+
+for col_name in df[['standard_cost']]:
+  for c in to_remove:
+    df[col_name] = df[col_name].str.replace(c, '')
+
+df = df.astype({'standard_cost': 'float'})
+
+#changing order online to a boolean
+df = df.astype({'online_order': 'boolean'})
+
+#changing transaction date to date and time
+df['transaction_date'] = pd.to_datetime(df['transaction_date'])
+
+#only considering costumers with id's 1-4000
+df = df[~(df['customer_id'] >= 4000)]
+
+print(df.dtypes)
+
+df
